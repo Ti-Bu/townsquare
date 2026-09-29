@@ -5,8 +5,8 @@
       v-show="session.voteHistory.length && session.sessionId"
       @click="toggleModal('voteHistory')"
       :title="
-        `${session.voteHistory.length} recent ${
-          session.voteHistory.length == 1 ? 'nomination' : 'nominations'
+        `${session.voteHistory.length} ${
+          session.voteHistory.length == 1 ? 'aktuelle Nominierung' : 'aktuelle Nominierungen'
         }`
       "
     >
@@ -22,8 +22,8 @@
       v-if="session.sessionId"
       @click="leaveSession"
       :title="
-        `${session.playerCount} other players in this session${
-          session.ping ? ' (' + session.ping + 'ms latency)' : ''
+        `${session.playerCount} andere Spieler in dieser Sitzung${
+          session.ping ? ' (' + session.ping + 'ms Latenz)' : ''
         }`
       "
     >
@@ -49,17 +49,17 @@
           <!-- Grimoire -->
           <li class="headline">Grimoire</li>
           <li @click="toggleGrimoire" v-if="players.length">
-            <template v-if="!grimoire.isPublic">Hide</template>
-            <template v-if="grimoire.isPublic">Show</template>
+            <template v-if="!grimoire.isPublic">Verbergen</template>
+            <template v-if="grimoire.isPublic">Anzeigen</template>
             <em>[G]</em>
           </li>
           <li @click="toggleNight" v-if="!session.isSpectator">
-            <template v-if="!grimoire.isNight">Switch to Night</template>
-            <template v-if="grimoire.isNight">Switch to Day</template>
+            <template v-if="!grimoire.isNight">Zur Nacht wechseln</template>
+            <template v-if="grimoire.isNight">Zum Tag wechseln</template>
             <em>[S]</em>
           </li>
           <li @click="toggleNightOrder" v-if="players.length">
-            Night order
+            Nachtreihenfolge
             <em>
               <font-awesome-icon
                 :icon="[
@@ -84,11 +84,11 @@
             </em>
           </li>
           <li @click="setBackground">
-            Background image
+            Hintergrundbild
             <em><font-awesome-icon icon="image"/></em>
           </li>
           <li v-if="!edition.isOfficial" @click="imageOptIn">
-            <small>Show Custom Images</small>
+            <small>Eigene Bilder anzeigen</small>
             <em
               ><font-awesome-icon
                 :icon="[
@@ -98,14 +98,14 @@
             /></em>
           </li>
           <li @click="toggleStatic">
-            Disable Animations
+            Animationen deaktivieren
             <em
               ><font-awesome-icon
                 :icon="['fas', grimoire.isStatic ? 'check-square' : 'square']"
             /></em>
           </li>
           <li @click="toggleMuted">
-            Mute Sounds
+            Töne stummschalten
             <em
               ><font-awesome-icon
                 :icon="['fas', grimoire.isMuted ? 'volume-mute' : 'volume-up']"
@@ -116,36 +116,36 @@
         <template v-if="tab === 'session'">
           <!-- Session -->
           <li class="headline" v-if="session.sessionId">
-            {{ session.isSpectator ? "Playing" : "Hosting" }}
+            {{ session.isSpectator ? "Spielen" : "Leiten" }}
           </li>
           <li class="headline" v-else>
-            Live Session
+            Live-Sitzung
           </li>
           <template v-if="!session.sessionId">
-            <li @click="hostSession">Host (Storyteller)<em>[H]</em></li>
-            <li @click="joinSession">Join (Player)<em>[J]</em></li>
+            <li @click="hostSession">Leiten (Erzähler)<em>[H]</em></li>
+            <li @click="joinSession">Beitreten (Spieler)<em>[J]</em></li>
           </template>
           <template v-else>
             <li v-if="session.ping">
-              Delay to {{ session.isSpectator ? "host" : "players" }}
+              Verzögerung zu {{ session.isSpectator ? "Erzähler" : "Spielern" }}
               <em>{{ session.ping }}ms</em>
             </li>
             <li @click="copySessionUrl">
-              Copy player link
+              Spieler-Link kopieren
               <em><font-awesome-icon icon="copy"/></em>
             </li>
             <li v-if="!session.isSpectator" @click="distributeRoles">
-              Send Characters
+              Charaktere verteilen
               <em><font-awesome-icon icon="theater-masks"/></em>
             </li>
             <li
               v-if="session.voteHistory.length || !session.isSpectator"
               @click="toggleModal('voteHistory')"
             >
-              Vote history<em>[V]</em>
+              Abstimmungsverlauf<em>[V]</em>
             </li>
             <li @click="leaveSession">
-              Leave Session
+              Sitzung verlassen
               <em>{{ session.sessionId }}</em>
             </li>
           </template>
@@ -153,60 +153,64 @@
 
         <template v-if="tab === 'players' && !session.isSpectator">
           <!-- Users -->
-          <li class="headline">Players</li>
-          <li @click="addPlayer" v-if="players.length < 20">Add<em>[A]</em></li>
+          <li class="headline">Spieler</li>
+          <li @click="addPlayer" v-if="players.length < 20">Hinzufügen<em>[A]</em></li>
           <li @click="randomizeSeatings" v-if="players.length > 2">
-            Randomize
+            Mischen
             <em><font-awesome-icon icon="dice"/></em>
           </li>
           <li @click="clearPlayers" v-if="players.length">
-            Remove all
+            Alle entfernen
             <em><font-awesome-icon icon="trash-alt"/></em>
           </li>
         </template>
 
         <template v-if="tab === 'characters'">
           <!-- Characters -->
-          <li class="headline">Characters</li>
+          <li class="headline">Charaktere</li>
           <li v-if="!session.isSpectator" @click="toggleModal('edition')">
-            Select Edition
+            Edition wählen
             <em>[E]</em>
           </li>
           <li
             @click="toggleModal('roles')"
             v-if="!session.isSpectator && players.length > 4"
           >
-            Choose & Assign
+            Auswählen & Zuweisen
             <em>[C]</em>
           </li>
+          <li v-if="!session.isSpectator" @click="toggleModal('showToken')">
+            Token zeigen
+            <em>[T]</em>
+          </li>
           <li v-if="!session.isSpectator" @click="toggleModal('fabled')">
-            Add Fabled
+            Legende hinzufügen
             <em><font-awesome-icon icon="dragon"/></em>
           </li>
           <li @click="clearRoles" v-if="players.length">
-            Remove all
+            Alle entfernen
             <em><font-awesome-icon icon="trash-alt"/></em>
           </li>
         </template>
 
         <template v-if="tab === 'help'">
           <!-- Help -->
-          <li class="headline">Help</li>
+          <li class="headline">Hilfe</li>
           <li @click="toggleModal('reference')">
-            Reference Sheet
+            Übersichtsblatt
             <em>[R]</em>
           </li>
           <li @click="toggleModal('nightOrder')">
-            Night Order Sheet
+            Nachtreihenfolge-Blatt
             <em>[N]</em>
           </li>
           <li @click="toggleModal('gameState')">
-            Game State JSON
+            Spielstand-JSON
             <em><font-awesome-icon icon="file-code"/></em>
           </li>
           <li>
             <a href="https://discord.gg/Gd7ybwWbFk" target="_blank">
-              Join Discord
+              Discord beitreten
             </a>
             <em>
               <a href="https://discord.gg/Gd7ybwWbFk" target="_blank">
@@ -216,7 +220,7 @@
           </li>
           <li>
             <a href="https://github.com/bra1n/townsquare" target="_blank">
-              Source code
+              Quellcode
             </a>
             <em>
               <a href="https://github.com/bra1n/townsquare" target="_blank">
@@ -245,7 +249,7 @@ export default {
   },
   methods: {
     setBackground() {
-      const background = prompt("Enter custom background URL");
+      const background = prompt("Eigene Hintergrund-URL eingeben");
       if (background || background === "") {
         this.$store.commit("setBackground", background);
       }
@@ -253,7 +257,7 @@ export default {
     hostSession() {
       if (this.session.sessionId) return;
       const sessionId = prompt(
-        "Enter a channel number / name for your session",
+        "Kanalnummer / Name für deine Sitzung eingeben",
         Math.round(Math.random() * 10000)
       );
       if (sessionId) {
@@ -271,7 +275,7 @@ export default {
     distributeRoles() {
       if (this.session.isSpectator) return;
       const popup =
-        "Do you want to distribute assigned characters to all SEATED players?";
+        "Möchtest du die zugewiesenen Charaktere an alle SITZENDEN Spieler verteilen?";
       if (confirm(popup)) {
         this.$store.commit("session/distributeRoles", true);
         setTimeout(
@@ -284,7 +288,7 @@ export default {
     },
     imageOptIn() {
       const popup =
-        "Are you sure you want to allow custom images? A malicious script file author might track your IP address this way.";
+        "Bist du sicher, dass du eigene Bilder erlauben möchtest? Ein bösartiger Skript-Autor könnte auf diese Weise deine IP-Adresse nachverfolgen.";
       if (this.grimoire.isImageOptIn || confirm(popup)) {
         this.toggleImageOptIn();
       }
@@ -292,7 +296,7 @@ export default {
     joinSession() {
       if (this.session.sessionId) return this.leaveSession();
       let sessionId = prompt(
-        "Enter the channel number / name of the session you want to join"
+        "Kanalnummer / Name der Sitzung eingeben, der du beitreten möchtest"
       );
       if (sessionId.match(/^https?:\/\//i)) {
         sessionId = sessionId.split("#").pop();
@@ -305,7 +309,7 @@ export default {
       }
     },
     leaveSession() {
-      if (confirm("Are you sure you want to leave the active live game?")) {
+      if (confirm("Bist du sicher, dass du das laufende Live-Spiel verlassen möchtest?")) {
         this.$store.commit("session/setSpectator", false);
         this.$store.commit("session/setSessionId", "");
       }
@@ -313,20 +317,20 @@ export default {
     addPlayer() {
       if (this.session.isSpectator) return;
       if (this.players.length >= 20) return;
-      const name = prompt("Player name");
+      const name = prompt("Spielername");
       if (name) {
         this.$store.commit("players/add", name);
       }
     },
     randomizeSeatings() {
       if (this.session.isSpectator) return;
-      if (confirm("Are you sure you want to randomize seatings?")) {
+      if (confirm("Bist du sicher, dass du die Sitzordnung mischen möchtest?")) {
         this.$store.dispatch("players/randomize");
       }
     },
     clearPlayers() {
       if (this.session.isSpectator) return;
-      if (confirm("Are you sure you want to remove all players?")) {
+      if (confirm("Bist du sicher, dass du alle Spieler entfernen möchtest?")) {
         // abort vote if in progress
         if (this.session.nomination) {
           this.$store.commit("session/nomination");
@@ -335,7 +339,7 @@ export default {
       }
     },
     clearRoles() {
-      if (confirm("Are you sure you want to remove all player roles?")) {
+      if (confirm("Bist du sicher, dass du alle Rollen der Spieler entfernen möchtest?")) {
         this.$store.dispatch("players/clearRoles");
       }
     },

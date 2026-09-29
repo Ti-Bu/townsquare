@@ -404,9 +404,9 @@ class LiveSession {
           }
         });
         alert(
-          `This session contains custom characters that can't be found. ` +
-            `Please load them before joining! ` +
-            `Missing roles: ${missing.join(", ")}`
+          `Diese Sitzung enthält eigene Charaktere, die nicht gefunden werden können. ` +
+            `Bitte lade sie, bevor du beitrittst! ` +
+            `Fehlende Rollen: ${missing.join(", ")}`
         );
         this.disconnect();
         this._store.commit("toggleModal", "edition");

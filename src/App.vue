@@ -35,6 +35,7 @@
     <NightOrderModal />
     <VoteHistoryModal />
     <GameStateModal />
+    <ShowTokenModal />
     <Gradients />
     <span id="version">v{{ version }}</span>
   </div>
@@ -56,9 +57,11 @@ import NightOrderModal from "./components/modals/NightOrderModal";
 import FabledModal from "@/components/modals/FabledModal";
 import VoteHistoryModal from "@/components/modals/VoteHistoryModal";
 import GameStateModal from "@/components/modals/GameStateModal";
+import ShowTokenModal from "@/components/modals/ShowTokenModal";
 
 export default {
   components: {
+    ShowTokenModal,
     GameStateModal,
     VoteHistoryModal,
     FabledModal,
@@ -116,6 +119,10 @@ export default {
           if (this.session.voteHistory.length || !this.session.isSpectator) {
             this.$store.commit("toggleModal", "voteHistory");
           }
+          break;
+        case "t":
+          if (this.session.isSpectator) return;
+          this.$store.commit("toggleModal", "showToken");
           break;
         case "s":
           if (this.session.isSpectator) return;

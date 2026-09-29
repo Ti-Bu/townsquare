@@ -8,11 +8,11 @@
       @click="clearVoteHistory"
       icon="trash-alt"
       class="clear"
-      title="Clear vote history"
+      title="Abstimmungsverlauf leeren"
       v-if="session.isSpectator"
     />
 
-    <h3>Vote history</h3>
+    <h3>Abstimmungsverlauf</h3>
 
     <template v-if="!session.isSpectator">
       <div class="options">
@@ -23,26 +23,26 @@
               session.isVoteHistoryAllowed ? 'check-square' : 'square'
             ]"
           />
-          Accessible to players
+          Für Spieler einsehbar
         </div>
         <div class="option" @click="clearVoteHistory">
           <font-awesome-icon icon="trash-alt" />
-          Clear for everyone
+          Für alle leeren
         </div>
       </div>
     </template>
     <table>
       <thead>
         <tr>
-          <td>Time</td>
-          <td>Nominator</td>
-          <td>Nominee</td>
-          <td>Type</td>
-          <td>Votes</td>
-          <td>Majority</td>
+          <td>Zeit</td>
+          <td>Nominierende(r)</td>
+          <td>Nominierte(r)</td>
+          <td>Art</td>
+          <td>Stimmen</td>
+          <td>Mehrheit</td>
           <td>
             <font-awesome-icon icon="user-friends" />
-            Voters
+            Abstimmende
           </td>
         </tr>
       </thead>
@@ -63,7 +63,7 @@
           </td>
           <td>{{ vote.nominator }}</td>
           <td>{{ vote.nominee }}</td>
-          <td>{{ vote.type }}</td>
+          <td>{{ vote.type === "Exile" ? "Verbannung" : "Hinrichtung" }}</td>
           <td>
             {{ vote.votes.length }}
             <font-awesome-icon icon="hand-paper" />

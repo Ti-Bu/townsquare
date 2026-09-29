@@ -6,22 +6,22 @@
     </div>
     <div class="overlay">
       <audio src="../assets/sounds/countdown.mp3" preload="auto"></audio>
-      <em class="blue">{{ nominator.name }}</em> nominated
+      <em class="blue">{{ nominator.name }}</em> hat nominiert:
       <em>{{ nominee.name }}</em
       >!
       <br />
       <em class="blue">
-        {{ voters.length }} vote{{ voters.length !== 1 ? "s" : "" }}
+        {{ voters.length }} {{ voters.length !== 1 ? "Stimmen" : "Stimme" }}
       </em>
-      in favor
+      dafür
       <em v-if="nominee.role.team !== 'traveler'">
-        (majority is {{ Math.ceil(alive / 2) }})
+        (Mehrheit bei {{ Math.ceil(alive / 2) }})
       </em>
-      <em v-else>(majority is {{ Math.ceil(players.length / 2) }})</em>
+      <em v-else>(Mehrheit bei {{ Math.ceil(players.length / 2) }})</em>
 
       <template v-if="!session.isSpectator">
         <div v-if="!session.isVoteInProgress && session.lockedVote < 1">
-          Time per player:
+          Zeit pro Spieler:
           <font-awesome-icon
             @mousedown.prevent="setVotingSpeed(-500)"
             icon="minus-circle"
@@ -41,7 +41,7 @@
             Countdown
           </div>
           <div class="button" v-if="!session.isVoteInProgress" @click="start">
-            {{ session.lockedVote ? "Restart" : "Start" }}
+            {{ session.lockedVote ? "Neustart" : "Start" }}
           </div>
           <template v-else>
             <div
@@ -49,11 +49,11 @@
               :class="{ disabled: !session.lockedVote }"
               @click="pause"
             >
-              {{ voteTimer ? "Pause" : "Resume" }}
+              {{ voteTimer ? "Pause" : "Fortsetzen" }}
             </div>
-            <div class="button" @click="stop">Reset</div>
+            <div class="button" @click="stop">Zurücksetzen</div>
           </template>
-          <div class="button demon" @click="finish">Close</div>
+          <div class="button demon" @click="finish">Schließen</div>
         </div>
         <div class="button-group mark" v-if="nominee.role.team !== 'traveler'">
           <div
@@ -63,16 +63,16 @@
             }"
             @click="setMarked"
           >
-            Mark for execution
+            Zur Hinrichtung markieren
           </div>
           <div class="button" @click="removeMarked">
-            Clear mark
+            Markierung entfernen
           </div>
         </div>
       </template>
       <template v-else-if="canVote">
         <div v-if="!session.isVoteInProgress">
-          {{ session.votingSpeed / 1000 }} seconds between votes
+          {{ session.votingSpeed / 1000 }} Sekunden zwischen den Stimmen
         </div>
         <div class="button-group">
           <div
@@ -80,19 +80,19 @@
             @click="vote(false)"
             :class="{ disabled: !currentVote }"
           >
-            Hand DOWN
+            Hand senken
           </div>
           <div
             class="button demon"
             @click="vote(true)"
             :class="{ disabled: currentVote }"
           >
-            Hand UP
+            Hand heben
           </div>
         </div>
       </template>
       <div v-else-if="!player">
-        Please claim a seat to vote.
+        Bitte nimm einen Platz, um abzustimmen.
       </div>
     </div>
     <transition name="blur">
@@ -103,7 +103,7 @@
         <span>3</span>
         <span>2</span>
         <span>1</span>
-        <span>GO</span>
+        <span>LOS</span>
         <audio
           :autoplay="!grimoire.isMuted"
           src="../assets/sounds/countdown.mp3"

@@ -8,12 +8,12 @@
       @click="toggleModal('nightOrder')"
       icon="cloud-moon"
       class="toggle"
-      title="Show Night Order"
+      title="Nachtreihenfolge anzeigen"
     />
     <h3>
-      Character Reference
+      Charakterübersicht
       <font-awesome-icon icon="address-card" />
-      {{ edition.name || "Custom Script" }}
+      {{ edition.name || "Eigenes Skript" }}
     </h3>
     <div
       v-for="(teamRoles, team) in rolesGrouped"
@@ -21,7 +21,7 @@
       :class="['team', team]"
     >
       <aside>
-        <h4>{{ team }}</h4>
+        <h4>{{ teamNames[team] || team }}</h4>
       </aside>
       <ul>
         <li v-for="role in teamRoles" :class="[team]" :key="role.id">
@@ -53,7 +53,7 @@
 
     <div class="team jinxed" v-if="jinxed.length">
       <aside>
-        <h4>Jinxed</h4>
+        <h4>Jinxes</h4>
       </aside>
       <ul>
         <li v-for="(jinx, index) in jinxed" :key="index">
@@ -94,6 +94,18 @@ import { mapMutations, mapState } from "vuex";
 export default {
   components: {
     Modal
+  },
+  data() {
+    return {
+      teamNames: {
+        townsfolk: "Bürger",
+        outsider: "Außenseiter",
+        minion: "Schergen",
+        demon: "Dämonen",
+        traveler: "Reisende",
+        fabled: "Legenden"
+      }
+    };
   },
   computed: {
     /**

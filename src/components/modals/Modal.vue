@@ -70,7 +70,8 @@ export default {
 
   .vote-history &,
   .night-reference &,
-  .characters & {
+  .characters &,
+  .show-token & {
     overflow-y: auto;
   }
 

@@ -8,16 +8,16 @@
       @click="toggleModal('reference')"
       icon="address-card"
       class="toggle"
-      title="Show Character Reference"
+      title="Charakterübersicht anzeigen"
     />
     <h3>
-      Night Order
+      Nachtreihenfolge
       <font-awesome-icon icon="cloud-moon" />
-      {{ edition.name || "Custom Script" }}
+      {{ edition.name || "Eigenes Skript" }}
     </h3>
     <div class="night">
       <ul class="first">
-        <li class="headline">First Night</li>
+        <li class="headline">Erste Nacht</li>
         <li
           v-for="role in rolesFirstNight"
           :key="role.name"
@@ -56,7 +56,7 @@
         </li>
       </ul>
       <ul class="other">
-        <li class="headline">Other Nights</li>
+        <li class="headline">Andere Nächte</li>
         <li
           v-for="role in rolesOtherNight"
           :key="role.name"
@@ -114,24 +114,24 @@ export default {
         rolesFirstNight.push(
           {
             id: "evil",
-            name: "Minion info",
+            name: "Schergen-Info",
             firstNight: 5,
             team: "minion",
             players: this.players.filter(p => p.role.team === "minion"),
             firstNightReminder:
-              "• If more than one Minion, they all make eye contact with each other. " +
-              "• Show the “This is the Demon” card. Point to the Demon."
+              "• Gibt es mehr als einen Schergen, sehen sie sich alle gegenseitig an. " +
+              "• Zeige die Karte „Das ist der Dämon“. Zeige auf den Dämon."
           },
           {
             id: "evil",
-            name: "Demon info & bluffs",
+            name: "Dämon-Info & Bluffs",
             firstNight: 8,
             team: "demon",
             players: this.players.filter(p => p.role.team === "demon"),
             firstNightReminder:
-              "• Show the “These are your minions” card. Point to each Minion. " +
-              "• Show the “These characters are not in play” card. Show 3 character tokens of good " +
-              "characters not in play."
+              "• Zeige die Karte „Das sind deine Schergen“. Zeige auf jeden Schergen. " +
+              "• Zeige die Karte „Diese Charaktere sind nicht im Spiel“. Zeige 3 Charakter-Token guter " +
+              "Charaktere, die nicht im Spiel sind."
           }
         );
       }

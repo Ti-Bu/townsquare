@@ -1,5 +1,5 @@
 <template>
-  <li :style="zoom">
+  <li :style="zoom" :class="{ 'role-hidden': isRoleHidden }">
     <div
       ref="player"
       class="player"
@@ -47,38 +47,38 @@
         <font-awesome-icon
           icon="hand-paper"
           class="vote"
-          title="Hand UP"
+          title="Hand heben"
           @click="vote()"
         />
         <font-awesome-icon
           icon="times"
           class="vote"
-          title="Hand DOWN"
+          title="Hand senken"
           @click="vote()"
         />
         <font-awesome-icon
           icon="times-circle"
           class="cancel"
-          title="Cancel"
+          title="Abbrechen"
           @click="cancel()"
         />
         <font-awesome-icon
           icon="exchange-alt"
           class="swap"
           @click="swapPlayer(player)"
-          title="Swap seats with this player"
+          title="Plätze mit diesem Spieler tauschen"
         />
         <font-awesome-icon
           icon="redo-alt"
           class="move"
           @click="movePlayer(player)"
-          title="Move player to this seat"
+          title="Spieler auf diesen Platz verschieben"
         />
         <font-awesome-icon
           icon="hand-point-right"
           class="nominate"
           @click="nominatePlayer(player)"
-          title="Nominate this player"
+          title="Diesen Spieler nominieren"
         />
       </div>
 
@@ -96,7 +96,7 @@
         class="has-vote"
         v-if="player.isDead && !player.isVoteless"
         @click="updatePlayer('isVoteless', true)"
-        title="Ghost vote"
+        title="Geisterstimme"
       />
 
       <!-- On block icon -->
@@ -124,35 +124,39 @@
                 (session.isSpectator && player.id === session.playerId)
             "
           >
-            <font-awesome-icon icon="venus-mars" />Change Pronouns
+            <font-awesome-icon icon="venus-mars" />Pronomen ändern
           </li>
           <template v-if="!session.isSpectator">
+            <li @click="toggleRoleHidden">
+              <font-awesome-icon :icon="isRoleHidden ? 'eye' : 'eye-slash'" />
+              {{ isRoleHidden ? "Charakter einblenden" : "Charakter ausblenden" }}
+            </li>
             <li @click="changeName">
-              <font-awesome-icon icon="user-edit" />Rename
+              <font-awesome-icon icon="user-edit" />Umbenennen
             </li>
             <li @click="movePlayer()" :class="{ disabled: session.lockedVote }">
               <font-awesome-icon icon="redo-alt" />
-              Move player
+              Spieler verschieben
             </li>
             <li @click="swapPlayer()" :class="{ disabled: session.lockedVote }">
               <font-awesome-icon icon="exchange-alt" />
-              Swap seats
+              Plätze tauschen
             </li>
             <li @click="removePlayer" :class="{ disabled: session.lockedVote }">
               <font-awesome-icon icon="times-circle" />
-              Remove
+              Entfernen
             </li>
             <li
               @click="updatePlayer('id', '', true)"
               v-if="player.id && session.sessionId"
             >
               <font-awesome-icon icon="chair" />
-              Empty seat
+              Platz leeren
             </li>
             <template v-if="!session.nomination">
               <li @click="nominatePlayer()">
                 <font-awesome-icon icon="hand-point-right" />
-                Nomination
+                Nominierung
               </li>
             </template>
           </template>
@@ -163,12 +167,12 @@
           >
             <font-awesome-icon icon="chair" />
             <template v-if="!player.id">
-              Claim seat
+              Platz nehmen
             </template>
             <template v-else-if="player.id === session.playerId">
-              Vacate seat
+              Platz freigeben
             </template>
-            <template v-else> Seat occupied</template>
+            <template v-else> Platz belegt</template>
           </li>
         </ul>
       </transition>
@@ -220,8 +224,11 @@ export default {
   },
   computed: {
     ...mapState("players", ["players"]),
-    ...mapState(["grimoire", "session"]),
+    ...mapState(["grimoire", "session", "hiddenPlayers"]),
     ...mapGetters({ nightOrder: "players/nightOrder" }),
+    isRoleHidden() {
+      return this.hiddenPlayers.includes(this.player);
+    },
     index: function() {
       return this.players.indexOf(this.player);
     },
@@ -253,10 +260,14 @@ export default {
     };
   },
   methods: {
+    toggleRoleHidden() {
+      this.$store.commit("toggleHiddenPlayer", this.player);
+      this.isMenuOpen = false;
+    },
     changePronouns() {
       if (this.session.isSpectator && this.player.id !== this.session.playerId)
         return;
-      const pronouns = prompt("Player pronouns", this.player.pronouns);
+      const pronouns = prompt("Pronomen des Spielers", this.player.pronouns);
       //Only update pronouns if not null (prompt was not cancelled)
       if (pronouns !== null) {
         this.updatePlayer("pronouns", pronouns, true);
@@ -287,7 +298,7 @@ export default {
     },
     changeName() {
       if (this.session.isSpectator) return;
-      const name = prompt("Player name", this.player.name) || this.player.name;
+      const name = prompt("Name des Spielers", this.player.name) || this.player.name;
       this.updatePlayer("name", name, true);
     },
     removeReminder(reminder) {
@@ -947,6 +958,20 @@ li.move:not(.from) .player .overlay svg.move {
 }
 .circle li:hover .reminder.add:before {
   opacity: 1;
+}
+
+li.role-hidden {
+  .player .token {
+    transform: perspective(400px) rotateY(-180deg);
+    pointer-events: none;
+  }
+  .player .life {
+    transform: perspective(400px) rotateY(0deg);
+  }
+  .night-order,
+  .reminder:not(.add) {
+    display: none;
+  }
 }
 
 #townsquare.public .reminder {

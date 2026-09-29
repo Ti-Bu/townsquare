@@ -117,13 +117,15 @@ export default new Vuex.Store({
       reminder: false,
       role: false,
       roles: false,
+      showToken: false,
       voteHistory: false
     },
     edition: editionJSONbyId.get("tb"),
     roles: getRolesByEdition(),
     otherTravelers: getTravelersNotInEdition(),
     fabled,
-    jinxes
+    jinxes,
+    hiddenPlayers: []
   },
   getters: {
     /**
@@ -171,6 +173,11 @@ export default new Vuex.Store({
     toggleNight: toggle("isNight"),
     toggleGrimoire: toggle("isPublic"),
     toggleImageOptIn: toggle("isImageOptIn"),
+    toggleHiddenPlayer(state, player) {
+      state.hiddenPlayers = state.hiddenPlayers.includes(player)
+        ? state.hiddenPlayers.filter(p => p !== player)
+        : [...state.hiddenPlayers, player];
+    },
     toggleModal({ modals }, name) {
       if (name) {
         modals[name] = !modals[name];
